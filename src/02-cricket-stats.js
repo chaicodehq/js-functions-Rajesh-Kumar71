@@ -39,20 +39,58 @@
  */
 export const calcStrikeRate = (runs, balls) => {
   // Your code here
+  if (typeof runs !== "number" || typeof balls !== "number") return 0;
+  if (!Number.isFinite(runs) || !Number.isFinite(balls)) return 0;
+  if (balls <= 0 || runs <= 0) return 0;
+
+  const sr = (runs / balls) * 100;
+  return parseFloat(sr.toFixed(2));
 };
 
 export const calcEconomy = (runsConceded, overs) => {
   // Your code here
+  if (typeof runsConceded !== "number" || typeof overs !== "number") return 0;
+  if (!Number.isFinite(runsConceded) || !Number.isFinite(overs)) return 0;
+  if (overs <= 0 || runsConceded <= 0) return 0;
+
+  const eco = (runsConceded / overs);
+  return parseFloat(eco.toFixed(2));
 };
 
 export const calcBattingAvg = (totalRuns, innings, notOuts = 0) => {
   // Your code here
+  if (typeof totalRuns !== "number" || typeof innings !== "number" || typeof notOuts !== "number") return 0;
+  if (!Number.isFinite(totalRuns) || !Number.isFinite(innings) || !Number.isFinite(notOuts)) return 0;
+  if (totalRuns < 0 || innings <  0 || notOuts < 0) return 0;
+
+  const outs = innings - notOuts;
+  if (outs <= 0) return 0;
+  
+  const avg = (totalRuns / outs);
+  return parseFloat(avg.toFixed(2));
 };
 
 export const isAllRounder = (battingAvg, economy) => {
   // Your code here
+  if (typeof battingAvg !== "number" || typeof economy !== "number") return false;
+  if (!Number.isFinite(battingAvg) || !Number.isFinite(economy)) return false;
+  return battingAvg > 30 && economy < 8;
 };
 
 export const getPlayerCard = (player) => {
   // Your code here
+  if(!player || typeof player !== "object") return null;
+  if(typeof player.name !== "string" || player.name.trim() === "") return null;
+
+  const strikeRate = calcStrikeRate(player.runs, player.balls);
+  const economy = calcEconomy(player.runsConceded, player.overs);
+  const battingAvg = calcBattingAvg(player.totalRuns, player.innings, player.notOuts ?? 0);
+
+  return {
+    name: player.name,
+    strikeRate,
+    economy,
+    battingAvg,
+    isAllRounder: isAllRounder(battingAvg, economy),
+  };
 };

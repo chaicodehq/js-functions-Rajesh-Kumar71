@@ -46,12 +46,60 @@
  */
 export function createDialogueWriter(genre) {
   // Your code here
+  if (typeof genre !== "string") return null;
+
+  const templates = {
+    action: (hero, villain) => `${hero} says: 'Tujhe toh main dekh lunga, ${villain}!'`,
+    romance: (hero, villain) => `${hero} whispers: '${villain}, tum mere liye sab kuch ho'`,
+    comedy: (hero, villain) => `${hero} laughs: '${villain} bhai, kya kar rahe ho yaar!'`,
+    drama: (hero, villain) => `${hero} cries: '${villain}, tune mera sab kuch cheen liya!'`,
+  }
+  const key = genre.toLowerCase();
+  const templateFn = templates[key];
+  if (!templateFn) return null;
+
+  return (hero, villain) => {
+    if (typeof hero !== "string" || typeof villain !== "string") return "...";
+    if (hero.trim() === "" || villain.trim() === "") return "...";
+    return templateFn(hero, villain);
+  }
 }
 
 export function createTicketPricer(basePrice) {
   // Your code here
+  if (typeof basePrice !== "number" || !Number.isFinite(basePrice) || basePrice <= 0){ return null;}
+
+  return function(seatType, isWeekend = false){
+    let multiplier;
+
+    if (seatType === "silver") multiplier = 1;
+    else if (seatType === "gold") multiplier = 1.5;
+    else if (seatType === "platinum") multiplier = 2;
+    else return null;
+
+    let finalPrice = basePrice * multiplier;
+
+    if (isWeekend){
+      finalPrice = finalPrice * 1.3;
+    }
+    return Math.round(finalPrice);
+  };
 }
 
 export function createRatingCalculator(weights) {
   // Your code here
+  if (!weights || typeof weights !== "object" || Array.isArray(weights)) return null;
+
+  return function(scores){
+    if (!scores) return 0;
+
+    let total = 0;
+
+    total += (scores.story || 0) * (weights.story || 0);
+    total += (scores.acting || 0) * (weights.acting || 0);
+    total += (scores.direction || 0) * (weights.direction || 0);
+    total += (scores.music || 0) * (weights.music || 0);
+  return Math.round(total * 10) / 10
+  };
+  
 }
